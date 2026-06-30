@@ -26,6 +26,10 @@ final class TrackersViewController: UIViewController {
     }()
 
     // MARK: - State Properties
+    private let trackerStore: TrackerStore
+    private let trackerCategoryStore: TrackerCategoryStore
+    private let trackerRecordStore: TrackerRecordStore
+
     var categories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = [] {
         didSet {
@@ -48,59 +52,41 @@ final class TrackersViewController: UIViewController {
     }
     private var searchQuery: String = ""
 
+    init(trackerStore: TrackerStore, trackerCategoryStore: TrackerCategoryStore, trackerRecordStore: TrackerRecordStore) {
+        self.trackerStore = trackerStore
+        self.trackerCategoryStore = trackerCategoryStore
+        self.trackerRecordStore = trackerRecordStore
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        createMockData()
+        
+        trackerStore.delegate = self
+        trackerCategoryStore.delegate = self
+        trackerRecordStore.delegate = self
+        
+        loadCategories()
+        loadCompletedTrackers()
+        
         setupUI()
         setupNavigationBar()
         setupConstraints()
         updateVisibleCategories()
     }
-
-    // MARK: - Setup Mock Data
-    private func createMockData() {
-        let categories = [
-            TrackerCategory(
-                title: "Домашний уют",
-                trackers: [
-                    Tracker(
-                        id: UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
-                        name: "Поливать комнатные цветы",
-                        color: UIColor(hex: "#33CF74"),
-                        emoji: "😪",
-                        schedule: [.monday, .wednesday, .friday, .sunday]
-                    ),
-                    Tracker(
-                        id: UUID(uuidString: "22222222-2222-2222-2222-222222222222")!,
-                        name: "Пылесосить квартиру",
-                        color: UIColor(hex: "#FF9241"),
-                        emoji: "🧹",
-                        schedule: [.saturday, .sunday]
-                    )
-                ]
-            ),
-            TrackerCategory(
-                title: "Саморазвитие",
-                trackers: [
-                    Tracker(
-                        id: UUID(uuidString: "33333333-3333-3333-3333-333333333333")!,
-                        name: "Кодить на Swift и решать задачи",
-                        color: UIColor(hex: "#3772E7"),
-                        emoji: "💻",
-                        schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-                    ),
-                    Tracker(
-                        id: UUID(uuidString: "44444444-4444-4444-4444-444444444444")!,
-                        name: "Заниматься спортом в зале",
-                        color: UIColor(hex: "#F56B6C"),
-                        emoji: "💪",
-                        schedule: [.tuesday, .thursday, .saturday]
-                    )
-                ]
-            )
-        ]
-        self.categories = categories
+    
+    private func loadCategories() {
+        self.categories = trackerCategoryStore.categories
+        updateVisibleCategories()
+    }
+    
+    private func loadCompletedTrackers() {
+        self.completedTrackers = (try? trackerRecordStore.fetchRecords()) ?? []
     }
 
     // MARK: - Setup UI & Layout
@@ -259,9 +245,11 @@ extension TrackersViewController: TrackerCellDelegate {
             completedTrackers.removeAll { record in
                 record.trackerId == tracker.id && calendar.isDate(record.date, inSameDayAs: currentDate)
             }
+            try? trackerRecordStore.removeRecord(TrackerRecord(trackerId: tracker.id, date: currentDate))
         } else {
             let newRecord = TrackerRecord(trackerId: tracker.id, date: currentDate)
             completedTrackers.append(newRecord)
+            try? trackerRecordStore.addRecord(newRecord)
         }
         
         collectionView.reloadItems(at: [indexPath])
@@ -351,14 +339,32 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - CreateTrackerDelegate
 extension TrackersViewController: CreateTrackerDelegate {
     func didCreateTracker(_ tracker: Tracker, categoryTitle: String) {
-        if let index = categories.firstIndex(where: { $0.title == categoryTitle }) {
-            var updatedTrackers = categories[index].trackers
-            updatedTrackers.append(tracker)
-            categories[index] = TrackerCategory(title: categoryTitle, trackers: updatedTrackers)
-        } else {
-            let newCategory = TrackerCategory(title: categoryTitle, trackers: [tracker])
-            categories.append(newCategory)
+        do {
+            try trackerStore.addTracker(tracker, toCategoryWithTitle: categoryTitle)
+        } catch {
+            print("Failed to add tracker: \(error)")
         }
+    }
+}
+
+// MARK: - TrackerStoreDelegate
+extension TrackersViewController: TrackerStoreDelegate {
+    func store(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
+        loadCategories()
+    }
+}
+
+// MARK: - TrackerCategoryStoreDelegate
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
+        loadCategories()
+    }
+}
+
+// MARK: - TrackerRecordStoreDelegate
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func store(_ store: TrackerRecordStore, didUpdate update: TrackerRecordStoreUpdate) {
+        loadCompletedTrackers()
         updateVisibleCategories()
     }
 }
