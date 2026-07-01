@@ -16,7 +16,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = LaunchViewController()
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let launchVC = LaunchViewController(
+            trackerStore: appDelegate.trackerStore,
+            trackerCategoryStore: appDelegate.trackerCategoryStore,
+            trackerRecordStore: appDelegate.trackerRecordStore
+        )
+        window.rootViewController = launchVC
         window.makeKeyAndVisible()
         self.window = window
     }

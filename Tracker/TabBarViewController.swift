@@ -1,6 +1,20 @@
 import UIKit
 
 final class TabBarViewController: UITabBarController {
+    private let trackerStore: TrackerStore
+    private let trackerCategoryStore: TrackerCategoryStore
+    private let trackerRecordStore: TrackerRecordStore
+    
+    init(trackerStore: TrackerStore, trackerCategoryStore: TrackerCategoryStore, trackerRecordStore: TrackerRecordStore) {
+        self.trackerStore = trackerStore
+        self.trackerCategoryStore = trackerCategoryStore
+        self.trackerRecordStore = trackerRecordStore
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -9,7 +23,11 @@ final class TabBarViewController: UITabBarController {
     }
 
     private func setupTabs() {
-        let trackersVC = TrackersViewController()
+        let trackersVC = TrackersViewController(
+            trackerStore: trackerStore,
+            trackerCategoryStore: trackerCategoryStore,
+            trackerRecordStore: trackerRecordStore
+        )
         let trackersNav = UINavigationController(rootViewController: trackersVC)
         trackersNav.tabBarItem = UITabBarItem(
             title: "Трекеры",
