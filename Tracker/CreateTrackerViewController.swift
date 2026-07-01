@@ -13,7 +13,7 @@ final class CreateTrackerViewController: UIViewController {
     private var isHabit: Bool = true
     private var trackerName: String = ""
     private var selectedSchedule: Set<WeekDay> = []
-    private let defaultCategoryTitle = "Важные дела"
+    private var selectedCategory: String?
     
     // MARK: - Selected Style Properties
     private var selectedEmoji: String?
@@ -243,8 +243,9 @@ final class CreateTrackerViewController: UIViewController {
         let isScheduleValid = !isHabit || !selectedSchedule.isEmpty
         let isEmojiValid = selectedEmoji != nil
         let isColorValid = selectedColor != nil
+        let isCategoryValid = selectedCategory != nil
         
-        let isValid = isNameValid && isScheduleValid && isEmojiValid && isColorValid
+        let isValid = isNameValid && isScheduleValid && isEmojiValid && isColorValid && isCategoryValid
         createButton.isEnabled = isValid
         createButton.backgroundColor = isValid ? .ypBlack : .ypGray
     }
@@ -260,7 +261,9 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        guard let selectedEmoji = selectedEmoji, let selectedColor = selectedColor else { return }
+        guard let selectedEmoji = selectedEmoji,
+              let selectedColor = selectedColor,
+              let selectedCategory = selectedCategory else { return }
         
         let trackerSchedule: Set<WeekDay>
         if isHabit {
@@ -277,7 +280,7 @@ final class CreateTrackerViewController: UIViewController {
             schedule: trackerSchedule
         )
         
-        delegate?.didCreateTracker(tracker, categoryTitle: defaultCategoryTitle)
+        delegate?.didCreateTracker(tracker, categoryTitle: selectedCategory)
         dismiss(animated: true)
     }
     
@@ -332,7 +335,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
         
         if indexPath.row == 0 {
             cell.textLabel?.text = "Категория"
-            cell.detailTextLabel?.text = defaultCategoryTitle
+            cell.detailTextLabel?.text = selectedCategory
         } else {
             cell.textLabel?.text = "Расписание"
             cell.detailTextLabel?.text = formatScheduleSubtitle()
@@ -373,7 +376,16 @@ extension CreateTrackerViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension CreateTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 1 {
+        if indexPath.row == 0 {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let viewModel = CategoryViewModel(
+                trackerCategoryStore: appDelegate.trackerCategoryStore,
+                selectedCategory: selectedCategory
+            )
+            let categoryVC = CategoryViewController(viewModel: viewModel)
+            categoryVC.delegate = self
+            navigationController?.pushViewController(categoryVC, animated: true)
+        } else if indexPath.row == 1 {
             // Push Schedule Screen
             let scheduleVC = ScheduleViewController()
             scheduleVC.delegate = self
@@ -590,5 +602,14 @@ final class CreateTrackerHeaderView: UICollectionReusableView {
     
     func configure(with title: String) {
         titleLabel.text = title
+    }
+}
+
+// MARK: - CategoryViewControllerDelegate
+extension CreateTrackerViewController: CategoryViewControllerDelegate {
+    func didSelectCategory(_ categoryTitle: String) {
+        self.selectedCategory = categoryTitle
+        optionsTableView.reloadData()
+        validateInputs()
     }
 }

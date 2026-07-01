@@ -149,4 +149,11 @@ final class EmptyStateView: UIView {
             label.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
+
+    func configure(text: String, image: UIImage?) {
+        label.text = text
+        if let image = image, let imageView = subviews.first(where: { $0 is UIImageView }) as? UIImageView {
+            imageView.image = image
+        }
+    }
 }
