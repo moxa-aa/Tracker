@@ -160,15 +160,6 @@ final class TrackerCell: UICollectionViewCell {
     
     // Helper to format days string (e.g. 1 день, 2 дня, 5 дней)
     private func formatDaysString(_ count: Int) -> String {
-        let mod10 = count % 10
-        let mod100 = count % 100
-        
-        if mod10 == 1 && mod100 != 11 {
-            return "\(count) день"
-        } else if mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20) {
-            return "\(count) дня"
-        } else {
-            return "\(count) дней"
-        }
+        return L10n.numberOfDays(count)
     }
 }

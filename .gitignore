@@ -15,3 +15,7 @@ build/
 
 # OS Files
 .DS_Store
+
+# Generated Files
+Tracker/L10n.swift
+

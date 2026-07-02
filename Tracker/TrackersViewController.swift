@@ -5,7 +5,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - UI Components
     private let searchTextField: UISearchTextField = {
         let textField = UISearchTextField()
-        textField.placeholder = "Поиск"
+        textField.placeholder = L10n.trackersSearch
         textField.backgroundColor = .ypLightGray
         textField.textColor = .ypBlack
         textField.font = UIFont.systemFont(ofSize: 17)
@@ -110,7 +110,7 @@ final class TrackersViewController: UIViewController {
     }
 
     private func setupNavigationBar() {
-        navigationItem.title = "Трекеры"
+        navigationItem.title = L10n.tabTrackers
         navigationController?.navigationBar.prefersLargeTitles = true
 
         // Left add button
@@ -131,7 +131,7 @@ final class TrackersViewController: UIViewController {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
-        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = Locale.current
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         
         let datePickerItem = UIBarButtonItem(customView: datePicker)
@@ -213,6 +213,13 @@ final class TrackersViewController: UIViewController {
         collectionView.reloadData()
         
         let isListEmpty = visibleCategories.isEmpty
+        if isListEmpty {
+            if searchQuery.isEmpty {
+                emptyStateView.configure(text: L10n.emptyStateWhatToTrack, image: UIImage(named: "emptyStateStar"))
+            } else {
+                emptyStateView.configure(text: L10n.emptyStateNoTrackersFound, image: UIImage(named: "emptyStateSearch"))
+            }
+        }
         emptyStateView.isHidden = !isListEmpty
         collectionView.isHidden = isListEmpty
     }

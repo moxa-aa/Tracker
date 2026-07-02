@@ -17,7 +17,7 @@ final class TrackerTypeSelectionViewController: UIViewController {
     
     private let habitButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Привычка", for: .normal)
+        button.setTitle(L10n.typeSelectionHabit, for: .normal)
         button.backgroundColor = .ypBlack
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -29,7 +29,7 @@ final class TrackerTypeSelectionViewController: UIViewController {
     
     private let irregularEventButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Нерегулярное событие", for: .normal)
+        button.setTitle(L10n.typeSelectionIrregularEvent, for: .normal)
         button.backgroundColor = .ypBlack
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -49,7 +49,7 @@ final class TrackerTypeSelectionViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = L10n.typeSelectionTitle
         
         view.addSubview(stackView)
         stackView.addArrangedSubview(habitButton)

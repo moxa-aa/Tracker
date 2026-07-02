@@ -15,9 +15,9 @@ private enum UIConstants {
 }
 
 private enum TextConstants {
-    static let emptyStateText = "Привычки и события можно\nобъединить по смыслу"
-    static let addCategoryButtonTitle = "Добавить категорию"
-    static let navigationTitle = "Категория"
+    static let emptyStateText = L10n.emptyStateCategoriesPlaceholder
+    static let addCategoryButtonTitle = L10n.categoryAdd
+    static let navigationTitle = L10n.categoryTitle
 }
 
 final class CategoryViewController: UIViewController {

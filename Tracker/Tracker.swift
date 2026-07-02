@@ -10,14 +10,30 @@ enum WeekDay: String, CaseIterable {
     case sunday = "Воскресенье"
     
     var shortName: String {
+        return localizedShortName
+    }
+    
+    var localizedName: String {
         switch self {
-        case .monday: return "Пн"
-        case .tuesday: return "Вт"
-        case .wednesday: return "Ср"
-        case .thursday: return "Чт"
-        case .friday: return "Пт"
-        case .saturday: return "Сб"
-        case .sunday: return "Вс"
+        case .monday: return L10n.weekdayMonday
+        case .tuesday: return L10n.weekdayTuesday
+        case .wednesday: return L10n.weekdayWednesday
+        case .thursday: return L10n.weekdayThursday
+        case .friday: return L10n.weekdayFriday
+        case .saturday: return L10n.weekdaySaturday
+        case .sunday: return L10n.weekdaySunday
+        }
+    }
+    
+    var localizedShortName: String {
+        switch self {
+        case .monday: return L10n.weekdayShortMonday
+        case .tuesday: return L10n.weekdayShortTuesday
+        case .wednesday: return L10n.weekdayShortWednesday
+        case .thursday: return L10n.weekdayShortThursday
+        case .friday: return L10n.weekdayShortFriday
+        case .saturday: return L10n.weekdayShortSaturday
+        case .sunday: return L10n.weekdayShortSunday
         }
     }
 }

@@ -7,11 +7,11 @@ final class OnboardingViewController: UIPageViewController {
     private lazy var pages: [UIViewController] = {
         let firstPage = OnboardingPageViewController(
             backgroundImageName: "onboarding_bg1",
-            titleText: "Отслеживайте только то, что хотите"
+            titleText: L10n.onboardingPage1
         )
         let secondPage = OnboardingPageViewController(
             backgroundImageName: "onboarding_bg2",
-            titleText: "Даже если это не литры воды и йога"
+            titleText: L10n.onboardingPage2
         )
         return [firstPage, secondPage]
     }()
@@ -28,7 +28,7 @@ final class OnboardingViewController: UIPageViewController {
     
     private lazy var confirmButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(L10n.onboardingConfirm, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlack

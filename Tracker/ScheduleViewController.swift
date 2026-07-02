@@ -26,7 +26,7 @@ final class ScheduleViewController: UIViewController {
     
     private let doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(L10n.scheduleDone, for: .normal)
         button.backgroundColor = .ypBlack
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -51,7 +51,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Расписание"
+        navigationItem.title = L10n.scheduleTitle
         navigationItem.hidesBackButton = true
         
         view.addSubview(tableView)
@@ -158,19 +158,4 @@ extension ScheduleViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension ScheduleViewController: UITableViewDelegate {
     // Empty delegate stub for future expansion
-}
-
-// Helper weekday localization extension
-extension WeekDay {
-    var localizedName: String {
-        switch self {
-        case .monday: return "Понедельник"
-        case .tuesday: return "Вторник"
-        case .wednesday: return "Среда"
-        case .thursday: return "Четверг"
-        case .friday: return "Пятница"
-        case .saturday: return "Суббота"
-        case .sunday: return "Воскресенье"
-        }
-    }
 }

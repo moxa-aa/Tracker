@@ -76,7 +76,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = L10n.createTrackerPlaceholder
         textField.backgroundColor = .ypBackground
         textField.textColor = .ypBlack
         textField.font = UIFont.systemFont(ofSize: 17)
@@ -113,7 +113,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private let cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(L10n.createTrackerCancel, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -127,7 +127,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private let createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(L10n.createTrackerCreate, for: .normal)
         button.backgroundColor = .ypGray
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -153,7 +153,7 @@ final class CreateTrackerViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = isHabit ? "Новая привычка" : "Новое нерегулярное событие"
+        navigationItem.title = isHabit ? L10n.createTrackerNewHabit : L10n.createTrackerNewIrregularEvent
         navigationItem.hidesBackButton = true
         
         view.addSubview(scrollView)
@@ -287,21 +287,11 @@ final class CreateTrackerViewController: UIViewController {
     // Helper to format selected weekdays into string (e.g. "Пн, Ср, Пт")
     private func formatScheduleSubtitle() -> String? {
         if selectedSchedule.isEmpty { return nil }
-        if selectedSchedule.count == 7 { return "Каждый день" }
+        if selectedSchedule.count == 7 { return L10n.createTrackerEveryDay }
         
         // Sort days logically from Monday to Sunday
         let sortedDays = WeekDay.allCases.filter { selectedSchedule.contains($0) }
-        let shortNames = sortedDays.map { day -> String in
-            switch day {
-            case .monday: return "Пн"
-            case .tuesday: return "Вт"
-            case .wednesday: return "Ср"
-            case .thursday: return "Чт"
-            case .friday: return "Пт"
-            case .saturday: return "Сб"
-            case .sunday: return "Вс"
-            }
-        }
+        let shortNames = sortedDays.map { $0.localizedShortName }
         return shortNames.joined(separator: ", ")
     }
 }
@@ -334,10 +324,10 @@ extension CreateTrackerViewController: UITableViewDataSource {
         cell.detailTextLabel?.textColor = .ypGray
         
         if indexPath.row == 0 {
-            cell.textLabel?.text = "Категория"
+            cell.textLabel?.text = L10n.createTrackerCategory
             cell.detailTextLabel?.text = selectedCategory
         } else {
-            cell.textLabel?.text = "Расписание"
+            cell.textLabel?.text = L10n.createTrackerSchedule
             cell.detailTextLabel?.text = formatScheduleSubtitle()
         }
         
@@ -453,7 +443,7 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         
-        let title = indexPath.section == 0 ? "Emoji" : "Цвет"
+        let title = indexPath.section == 0 ? L10n.createTrackerEmoji : L10n.createTrackerColor
         header.configure(with: title)
         return header
     }

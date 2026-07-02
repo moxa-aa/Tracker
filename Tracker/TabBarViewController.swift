@@ -35,7 +35,7 @@ final class TabBarViewController: UITabBarController {
         )
         let trackersNav = UINavigationController(rootViewController: trackersVC)
         trackersNav.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: L10n.tabTrackers,
             image: UIImage(systemName: SystemImages.trackersTab),
             selectedImage: nil
         )
@@ -43,7 +43,7 @@ final class TabBarViewController: UITabBarController {
         let statsVC = StatisticsViewController()
         let statsNav = UINavigationController(rootViewController: statsVC)
         statsNav.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: L10n.tabStatistics,
             image: UIImage(systemName: SystemImages.statisticsTab),
             selectedImage: nil
         )
