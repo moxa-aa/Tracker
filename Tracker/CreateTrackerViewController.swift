@@ -77,7 +77,7 @@ final class CreateTrackerViewController: UIViewController {
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название трекера"
-        textField.backgroundColor = .ypLightGray
+        textField.backgroundColor = .ypBackground
         textField.textColor = .ypBlack
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.layer.cornerRadius = 16
@@ -323,7 +323,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Reuse or create custom-styled subtitle cell
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "OptionCell")
-        cell.backgroundColor = .ypLightGray
+        cell.backgroundColor = .ypBackground
         cell.selectionStyle = .none
         cell.accessoryType = .disclosureIndicator
         
@@ -357,7 +357,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
         // Add divider line between the two options if Habit
         if isHabit && indexPath.row == 0 {
             let separator = UIView()
-            separator.backgroundColor = .ypGray.withAlphaComponent(0.5)
+            separator.backgroundColor = .ypGray.withAlphaComponent(0.3)
             separator.translatesAutoresizingMaskIntoConstraints = false
             cell.contentView.addSubview(separator)
             

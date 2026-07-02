@@ -37,7 +37,7 @@ extension UIColor {
 
     static var ypBackground: UIColor {
         return UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(hex: "#1A1B22") : UIColor.white
+            return traitCollection.userInterfaceStyle == .dark ? UIColor(hex: "#414141").withAlphaComponent(0.85) : UIColor(hex: "#E6E8EB").withAlphaComponent(0.3)
         }
     }
 

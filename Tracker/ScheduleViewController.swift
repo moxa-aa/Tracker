@@ -104,7 +104,7 @@ extension ScheduleViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WeekdayCell", for: indexPath)
-        cell.backgroundColor = .ypLightGray
+        cell.backgroundColor = .ypBackground
         cell.selectionStyle = .none
         
         let weekday = weekDays[indexPath.row]
@@ -135,9 +135,11 @@ extension ScheduleViewController: UITableViewDataSource {
         }
         
         // Custom separator line for intermediate cells
+        cell.contentView.subviews.forEach { if $0.tag == 100 { $0.removeFromSuperview() } }
         if indexPath.row < weekDays.count - 1 {
             let separator = UIView()
-            separator.backgroundColor = .ypGray.withAlphaComponent(0.5)
+            separator.tag = 100
+            separator.backgroundColor = .ypGray.withAlphaComponent(0.3)
             separator.translatesAutoresizingMaskIntoConstraints = false
             cell.contentView.addSubview(separator)
             

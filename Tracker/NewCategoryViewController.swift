@@ -13,7 +13,7 @@ final class NewCategoryViewController: UIViewController {
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название категории"
-        textField.backgroundColor = .ypLightGray
+        textField.backgroundColor = .ypBackground
         textField.textColor = .ypBlack
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.layer.cornerRadius = 16

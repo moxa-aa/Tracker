@@ -92,8 +92,8 @@ final class LaunchViewController: UIViewController {
 
     private func scheduleTransition() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            guard let self = self else { return }
-            let hasCompleted = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+            guard let self else { return }
+            let hasCompleted = UserDefaults.standard.bool(forKey: UserDefaults.hasCompletedOnboardingKey)
             if !hasCompleted {
                 self.switchToOnboarding()
             } else {
@@ -109,7 +109,7 @@ final class LaunchViewController: UIViewController {
         let onboardingVC = OnboardingViewController()
         onboardingVC.onCompletion = { [weak window] in
             guard let window = window else { return }
-            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+            UserDefaults.standard.set(true, forKey: UserDefaults.hasCompletedOnboardingKey)
             
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let tabBarVC = TabBarViewController(

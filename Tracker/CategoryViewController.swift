@@ -4,6 +4,22 @@ protocol CategoryViewControllerDelegate: AnyObject {
     func didSelectCategory(_ categoryTitle: String)
 }
 
+private enum UIConstants {
+    static let rowHeight: CGFloat = 75
+    static let tableViewTopOffset: CGFloat = 24
+    static let tableViewHorizontalOffset: CGFloat = 16
+    static let tableViewBottomOffset: CGFloat = -24
+    static let buttonHorizontalOffset: CGFloat = 20
+    static let buttonBottomOffset: CGFloat = -16
+    static let buttonHeight: CGFloat = 60
+}
+
+private enum TextConstants {
+    static let emptyStateText = "Привычки и события можно\nобъединить по смыслу"
+    static let addCategoryButtonTitle = "Добавить категорию"
+    static let navigationTitle = "Категория"
+}
+
 final class CategoryViewController: UIViewController {
     
     // MARK: - Delegate
@@ -16,7 +32,7 @@ final class CategoryViewController: UIViewController {
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundColor = .clear
-        tableView.rowHeight = 75
+        tableView.rowHeight = UIConstants.rowHeight
         tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
@@ -25,7 +41,7 @@ final class CategoryViewController: UIViewController {
     private let emptyStateView: EmptyStateView = {
         let view = EmptyStateView()
         view.configure(
-            text: "Привычки и события можно\nобъединить по смыслу",
+            text: TextConstants.emptyStateText,
             image: UIImage(named: "emptyStateStar")
         )
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -34,7 +50,7 @@ final class CategoryViewController: UIViewController {
     
     private let addCategoryButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(TextConstants.addCategoryButtonTitle, for: .normal)
         button.backgroundColor = .ypBlack
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -66,7 +82,7 @@ final class CategoryViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Категория"
+        navigationItem.title = TextConstants.navigationTitle
         navigationItem.hidesBackButton = true
         
         view.addSubview(tableView)
@@ -75,43 +91,40 @@ final class CategoryViewController: UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
+        tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.identifier)
         
         addCategoryButton.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Table view layout
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -24),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: UIConstants.tableViewTopOffset),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.tableViewHorizontalOffset),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.tableViewHorizontalOffset),
+            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: UIConstants.tableViewBottomOffset),
             
-            // Empty state view layout
             emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.tableViewHorizontalOffset),
+            emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.tableViewHorizontalOffset),
             
-            // Add Category button layout at bottom
-            addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            addCategoryButton.heightAnchor.constraint(equalToConstant: 60)
+            addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.buttonHorizontalOffset),
+            addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.buttonHorizontalOffset),
+            addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: UIConstants.buttonBottomOffset),
+            addCategoryButton.heightAnchor.constraint(equalToConstant: UIConstants.buttonHeight)
         ])
     }
     
     // MARK: - Bindings
     private func bindViewModel() {
         viewModel.onCategoriesUpdated = { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.tableView.reloadData()
             self.updateUIState()
         }
         
         viewModel.onCategorySelected = { [weak self] category in
-            guard let self = self else { return }
+            guard let self else { return }
             self.delegate?.didSelectCategory(category)
             self.navigationController?.popViewController(animated: true)
         }
@@ -134,61 +147,30 @@ final class CategoryViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension CategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.numberOfCategories()
+        viewModel.numberOfCategories()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        cell.backgroundColor = .ypLightGray
-        cell.selectionStyle = .none
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.identifier, for: indexPath) as? CategoryCell else {
+            return UITableViewCell()
+        }
         
         let title = viewModel.categoryTitle(at: indexPath.row)
-        cell.textLabel?.text = title
-        cell.textLabel?.textColor = .ypBlack
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        let isSelected = viewModel.isSelected(at: indexPath.row)
         
-        // Show checkmark if selected
-        if viewModel.isSelected(at: indexPath.row) {
-            let checkmarkImage = UIImage(systemName: "checkmark")
-            let checkmarkView = UIImageView(image: checkmarkImage)
-            checkmarkView.tintColor = .ypBlue
-            cell.accessoryView = checkmarkView
-        } else {
-            cell.accessoryView = nil
-        }
-        
-        // Custom rounding corners of rows
         let rowCount = viewModel.numberOfCategories()
-        cell.layer.masksToBounds = true
-        cell.layer.cornerRadius = 16
-        
+        let position: CellPosition
         if rowCount == 1 {
-            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            position = .single
         } else if indexPath.row == 0 {
-            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            position = .first
         } else if indexPath.row == rowCount - 1 {
-            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            position = .last
         } else {
-            cell.layer.maskedCorners = []
+            position = .middle
         }
         
-        // Add divider line between options
-        cell.contentView.subviews.forEach { if $0.tag == 100 { $0.removeFromSuperview() } }
-        if rowCount > 1 && indexPath.row < rowCount - 1 {
-            let separator = UIView()
-            separator.tag = 100
-            separator.backgroundColor = .ypGray.withAlphaComponent(0.5)
-            separator.translatesAutoresizingMaskIntoConstraints = false
-            cell.contentView.addSubview(separator)
-            
-            NSLayoutConstraint.activate([
-                separator.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 16),
-                separator.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
-                separator.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor),
-                separator.heightAnchor.constraint(equalToConstant: 0.5)
-            ])
-        }
-        
+        cell.configure(title: title, isSelected: isSelected, position: position)
         return cell
     }
 }
