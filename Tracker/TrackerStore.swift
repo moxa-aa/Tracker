@@ -16,7 +16,16 @@ final class TrackerStore: NSObject {
     weak var delegate: TrackerStoreDelegate?
     
     private let context: NSManagedObjectContext
-    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
+    private let fetchedResultsController: NSFetchedResultsController<TrackerCoreData>
+    
+    private var insertedIndexPaths: [IndexPath] = []
+    private var deletedIndexPaths: [IndexPath] = []
+    private var updatedIndexPaths: [IndexPath] = []
+    private var movedIndexPaths: [(from: IndexPath, to: IndexPath)] = []
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        
         let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         
@@ -26,19 +35,12 @@ final class TrackerStore: NSObject {
             sectionNameKeyPath: nil,
             cacheName: nil
         )
+        self.fetchedResultsController = controller
+        
+        super.init()
+        
         controller.delegate = self
         try? controller.performFetch()
-        return controller
-    }()
-    
-    private var insertedIndexPaths: [IndexPath] = []
-    private var deletedIndexPaths: [IndexPath] = []
-    private var updatedIndexPaths: [IndexPath] = []
-    private var movedIndexPaths: [(from: IndexPath, to: IndexPath)] = []
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-        super.init()
     }
     
     func addTracker(_ tracker: Tracker, toCategoryWithTitle categoryTitle: String) throws {
