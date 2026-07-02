@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import AppMetricaCore
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     lazy var trackerRecordStore = TrackerRecordStore(context: persistentContainer.viewContext)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        if let configuration = AppMetricaConfiguration(apiKey: "505ef2be-ed66-419b-a78b-be7e7215263d") {
+            AppMetrica.activate(with: configuration)
+        }
         return true
     }
 
