@@ -22,6 +22,11 @@ final class TabBarViewController: UITabBarController {
         setupAppearance()
     }
 
+    private enum SystemImages {
+        static let trackersTab = "record.circle.fill"
+        static let statisticsTab = "chart.bar.fill"
+    }
+
     private func setupTabs() {
         let trackersVC = TrackersViewController(
             trackerStore: trackerStore,
@@ -30,16 +35,16 @@ final class TabBarViewController: UITabBarController {
         )
         let trackersNav = UINavigationController(rootViewController: trackersVC)
         trackersNav.tabBarItem = UITabBarItem(
-            title: "Трекеры",
-            image: UIImage(systemName: "record.circle.fill"),
+            title: L10n.tabTrackers,
+            image: UIImage(systemName: SystemImages.trackersTab),
             selectedImage: nil
         )
 
         let statsVC = StatisticsViewController()
         let statsNav = UINavigationController(rootViewController: statsVC)
         statsNav.tabBarItem = UITabBarItem(
-            title: "Статистика",
-            image: UIImage(systemName: "chart.bar.fill"),
+            title: L10n.tabStatistics,
+            image: UIImage(systemName: SystemImages.statisticsTab),
             selectedImage: nil
         )
 

@@ -9,7 +9,7 @@ final class StatisticsViewController: UIViewController {
 
     private func setupUI() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Статистика"
+        navigationItem.title = L10n.statisticsTitle
         navigationController?.navigationBar.prefersLargeTitles = true
     }
 }

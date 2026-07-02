@@ -97,11 +97,22 @@ final class StarWithRingView: UIView {
 
 final class EmptyStateView: UIView {
 
-    private let starView = StarWithRingView()
+    private let starView: StarWithRingView = {
+        let view = StarWithRingView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
 
     private let label: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = L10n.emptyStateWhatToTrack
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -123,30 +134,49 @@ final class EmptyStateView: UIView {
     private func setupViews() {
         translatesAutoresizingMaskIntoConstraints = false
         
-        let illustration: UIView
-        if UIImage(named: "emptyStateStar") != nil {
-            let imageView = UIImageView(image: UIImage(named: "emptyStateStar"))
-            imageView.contentMode = .scaleAspectFit
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            illustration = imageView
-        } else {
-            starView.translatesAutoresizingMaskIntoConstraints = false
-            illustration = starView
-        }
-        
-        addSubview(illustration)
+        addSubview(starView)
+        addSubview(imageView)
         addSubview(label)
 
         NSLayoutConstraint.activate([
-            illustration.centerXAnchor.constraint(equalTo: centerXAnchor),
-            illustration.topAnchor.constraint(equalTo: topAnchor),
-            illustration.widthAnchor.constraint(equalToConstant: 80),
-            illustration.heightAnchor.constraint(equalToConstant: 80),
+            starView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            starView.topAnchor.constraint(equalTo: topAnchor),
+            starView.widthAnchor.constraint(equalToConstant: 80),
+            starView.heightAnchor.constraint(equalToConstant: 80),
 
-            label.topAnchor.constraint(equalTo: illustration.bottomAnchor, constant: 8),
+            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.widthAnchor.constraint(equalToConstant: 80),
+            imageView.heightAnchor.constraint(equalToConstant: 80),
+
+            label.topAnchor.constraint(equalTo: starView.bottomAnchor, constant: 8),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             label.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        // Default state uses emptyStateStar if it exists, otherwise starView drawing
+        if let defaultImg = UIImage(named: "emptyStateStar") {
+            imageView.image = defaultImg
+            imageView.isHidden = false
+            starView.isHidden = true
+        } else {
+            imageView.isHidden = true
+            starView.isHidden = false
+        }
+    }
+
+    func configure(text: String, image: UIImage?) {
+        label.text = text
+        if let image = image {
+            imageView.image = image
+            imageView.isHidden = false
+            starView.isHidden = true
+        } else {
+            // Fall back to drawing starView if no image is passed
+            imageView.image = nil
+            imageView.isHidden = true
+            starView.isHidden = false
+        }
     }
 }

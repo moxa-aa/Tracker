@@ -1,0 +1,21 @@
+# Xcode
+#
+# Reference: https://github.com/github/gitignore/blob/main/Global/Xcode.gitignore
+
+# User settings
+xcuserdata/
+*.xcuserstate
+
+# DerivedData and Build files
+DerivedData/
+build/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# OS Files
+.DS_Store
+
+# Generated Files
+Tracker/L10n.swift
+

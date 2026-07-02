@@ -9,19 +9,13 @@ import UIKit
 import CoreData
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
-    var trackerStore: TrackerStore!
-    var trackerCategoryStore: TrackerCategoryStore!
-    var trackerRecordStore: TrackerRecordStore!
+    lazy var trackerStore = TrackerStore(context: persistentContainer.viewContext)
+    lazy var trackerCategoryStore = TrackerCategoryStore(context: persistentContainer.viewContext)
+    lazy var trackerRecordStore = TrackerRecordStore(context: persistentContainer.viewContext)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        let context = persistentContainer.viewContext
-        trackerStore = TrackerStore(context: context)
-        trackerCategoryStore = TrackerCategoryStore(context: context)
-        trackerRecordStore = TrackerRecordStore(context: context)
         return true
     }
 
@@ -45,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let container = NSPersistentContainer(name: "Tracker")
         container.loadPersistentStores { (storeDescription, error) in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                assertionFailure("Unresolved error \(error), \(error.userInfo)")
             }
         }
         return container
@@ -60,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 try context.save()
             } catch {
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                assertionFailure("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }

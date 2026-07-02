@@ -16,7 +16,7 @@ final class TrackerCategoryStore: NSObject {
     weak var delegate: TrackerCategoryStoreDelegate?
     
     private let context: NSManagedObjectContext
-    private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>!
+    private let fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>
     
     private var insertedIndexPaths: [IndexPath] = []
     private var deletedIndexPaths: [IndexPath] = []
@@ -25,7 +25,6 @@ final class TrackerCategoryStore: NSObject {
 
     init(context: NSManagedObjectContext) {
         self.context = context
-        super.init()
         
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
@@ -36,9 +35,11 @@ final class TrackerCategoryStore: NSObject {
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-        controller.delegate = self
         self.fetchedResultsController = controller
         
+        super.init()
+        
+        controller.delegate = self
         try? controller.performFetch()
     }
     

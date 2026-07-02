@@ -1,0 +1,55 @@
+"tab.trackers" = "Trackers";
+"tab.statistics" = "Statistics";
+
+"onboarding.page1" = "Track only what you want";
+"onboarding.page2" = "Even if it's not liters of water and yoga";
+"onboarding.confirm" = "Wow, what technology!";
+
+"typeSelection.title" = "Create Tracker";
+"typeSelection.habit" = "Habit";
+"typeSelection.irregularEvent" = "Irregular Event";
+
+"emptyState.whatToTrack" = "What will we track?";
+"emptyState.categoriesPlaceholder" = "Habits and events can be\ngrouped by meaning";
+"emptyState.noTrackersFound" = "Nothing found";
+
+"statistics.title" = "Statistics";
+
+"schedule.title" = "Schedule";
+"schedule.done" = "Done";
+
+"weekday.monday" = "Monday";
+"weekday.tuesday" = "Tuesday";
+"weekday.wednesday" = "Wednesday";
+"weekday.thursday" = "Thursday";
+"weekday.friday" = "Friday";
+"weekday.saturday" = "Saturday";
+"weekday.sunday" = "Sunday";
+
+"weekday.short.monday" = "Mon";
+"weekday.short.tuesday" = "Tue";
+"weekday.short.wednesday" = "Wed";
+"weekday.short.thursday" = "Thu";
+"weekday.short.friday" = "Fri";
+"weekday.short.saturday" = "Sat";
+"weekday.short.sunday" = "Sun";
+
+"createTracker.placeholder" = "Enter tracker name";
+"createTracker.cancel" = "Cancel";
+"createTracker.create" = "Create";
+"createTracker.newHabit" = "New Habit";
+"createTracker.newIrregularEvent" = "New Irregular Event";
+"createTracker.everyDay" = "Every day";
+"createTracker.category" = "Category";
+"createTracker.schedule" = "Schedule";
+"createTracker.emoji" = "Emoji";
+"createTracker.color" = "Color";
+
+"category.add" = "Add Category";
+"category.title" = "Category";
+
+"newCategory.placeholder" = "Enter category name";
+"newCategory.title" = "New Category";
+"newCategory.ready" = "Done";
+
+"trackers.search" = "Search";

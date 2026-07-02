@@ -92,13 +92,45 @@ final class LaunchViewController: UIViewController {
 
     private func scheduleTransition() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.switchToTabBar()
+            guard let self else { return }
+            let hasCompleted = UserDefaults.standard.bool(forKey: UserDefaults.hasCompletedOnboardingKey)
+            if !hasCompleted {
+                self.switchToOnboarding()
+            } else {
+                self.switchToTabBar()
+            }
         }
     }
 
+    private func switchToOnboarding() {
+        let window = self.view.window ?? UIApplication.shared.windows.first { $0.isKeyWindow } ?? UIApplication.shared.windows.first
+        guard let window = window else { return }
+
+        let onboardingVC = OnboardingViewController()
+        onboardingVC.onCompletion = { [weak window] in
+            guard let window = window else { return }
+            UserDefaults.standard.set(true, forKey: UserDefaults.hasCompletedOnboardingKey)
+            
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let tabBarVC = TabBarViewController(
+                trackerStore: appDelegate.trackerStore,
+                trackerCategoryStore: appDelegate.trackerCategoryStore,
+                trackerRecordStore: appDelegate.trackerRecordStore
+            )
+            
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                window.rootViewController = tabBarVC
+            }, completion: nil)
+        }
+
+        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            window.rootViewController = onboardingVC
+        }, completion: nil)
+    }
+
     private func switchToTabBar() {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+        let window = self.view.window ?? UIApplication.shared.windows.first { $0.isKeyWindow } ?? UIApplication.shared.windows.first
+        guard let window = window else { return }
 
         let tabBarVC = TabBarViewController(
             trackerStore: trackerStore,

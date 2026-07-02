@@ -13,7 +13,7 @@ final class CreateTrackerViewController: UIViewController {
     private var isHabit: Bool = true
     private var trackerName: String = ""
     private var selectedSchedule: Set<WeekDay> = []
-    private let defaultCategoryTitle = "Важные дела"
+    private var selectedCategory: String?
     
     // MARK: - Selected Style Properties
     private var selectedEmoji: String?
@@ -76,8 +76,8 @@ final class CreateTrackerViewController: UIViewController {
     
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
-        textField.backgroundColor = .ypLightGray
+        textField.placeholder = L10n.createTrackerPlaceholder
+        textField.backgroundColor = .ypBackground
         textField.textColor = .ypBlack
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.layer.cornerRadius = 16
@@ -113,7 +113,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private let cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(L10n.createTrackerCancel, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -127,7 +127,7 @@ final class CreateTrackerViewController: UIViewController {
     
     private let createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(L10n.createTrackerCreate, for: .normal)
         button.backgroundColor = .ypGray
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -153,7 +153,7 @@ final class CreateTrackerViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = isHabit ? "Новая привычка" : "Новое нерегулярное событие"
+        navigationItem.title = isHabit ? L10n.createTrackerNewHabit : L10n.createTrackerNewIrregularEvent
         navigationItem.hidesBackButton = true
         
         view.addSubview(scrollView)
@@ -243,8 +243,9 @@ final class CreateTrackerViewController: UIViewController {
         let isScheduleValid = !isHabit || !selectedSchedule.isEmpty
         let isEmojiValid = selectedEmoji != nil
         let isColorValid = selectedColor != nil
+        let isCategoryValid = selectedCategory != nil
         
-        let isValid = isNameValid && isScheduleValid && isEmojiValid && isColorValid
+        let isValid = isNameValid && isScheduleValid && isEmojiValid && isColorValid && isCategoryValid
         createButton.isEnabled = isValid
         createButton.backgroundColor = isValid ? .ypBlack : .ypGray
     }
@@ -260,7 +261,9 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        guard let selectedEmoji = selectedEmoji, let selectedColor = selectedColor else { return }
+        guard let selectedEmoji = selectedEmoji,
+              let selectedColor = selectedColor,
+              let selectedCategory = selectedCategory else { return }
         
         let trackerSchedule: Set<WeekDay>
         if isHabit {
@@ -277,28 +280,18 @@ final class CreateTrackerViewController: UIViewController {
             schedule: trackerSchedule
         )
         
-        delegate?.didCreateTracker(tracker, categoryTitle: defaultCategoryTitle)
+        delegate?.didCreateTracker(tracker, categoryTitle: selectedCategory)
         dismiss(animated: true)
     }
     
     // Helper to format selected weekdays into string (e.g. "Пн, Ср, Пт")
     private func formatScheduleSubtitle() -> String? {
         if selectedSchedule.isEmpty { return nil }
-        if selectedSchedule.count == 7 { return "Каждый день" }
+        if selectedSchedule.count == 7 { return L10n.createTrackerEveryDay }
         
         // Sort days logically from Monday to Sunday
         let sortedDays = WeekDay.allCases.filter { selectedSchedule.contains($0) }
-        let shortNames = sortedDays.map { day -> String in
-            switch day {
-            case .monday: return "Пн"
-            case .tuesday: return "Вт"
-            case .wednesday: return "Ср"
-            case .thursday: return "Чт"
-            case .friday: return "Пт"
-            case .saturday: return "Сб"
-            case .sunday: return "Вс"
-            }
-        }
+        let shortNames = sortedDays.map { $0.localizedShortName }
         return shortNames.joined(separator: ", ")
     }
 }
@@ -320,7 +313,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Reuse or create custom-styled subtitle cell
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "OptionCell")
-        cell.backgroundColor = .ypLightGray
+        cell.backgroundColor = .ypBackground
         cell.selectionStyle = .none
         cell.accessoryType = .disclosureIndicator
         
@@ -331,10 +324,10 @@ extension CreateTrackerViewController: UITableViewDataSource {
         cell.detailTextLabel?.textColor = .ypGray
         
         if indexPath.row == 0 {
-            cell.textLabel?.text = "Категория"
-            cell.detailTextLabel?.text = defaultCategoryTitle
+            cell.textLabel?.text = L10n.createTrackerCategory
+            cell.detailTextLabel?.text = selectedCategory
         } else {
-            cell.textLabel?.text = "Расписание"
+            cell.textLabel?.text = L10n.createTrackerSchedule
             cell.detailTextLabel?.text = formatScheduleSubtitle()
         }
         
@@ -354,7 +347,7 @@ extension CreateTrackerViewController: UITableViewDataSource {
         // Add divider line between the two options if Habit
         if isHabit && indexPath.row == 0 {
             let separator = UIView()
-            separator.backgroundColor = .ypGray.withAlphaComponent(0.5)
+            separator.backgroundColor = .ypGray.withAlphaComponent(0.3)
             separator.translatesAutoresizingMaskIntoConstraints = false
             cell.contentView.addSubview(separator)
             
@@ -373,7 +366,16 @@ extension CreateTrackerViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension CreateTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 1 {
+        if indexPath.row == 0 {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let viewModel = CategoryViewModel(
+                trackerCategoryStore: appDelegate.trackerCategoryStore,
+                selectedCategory: selectedCategory
+            )
+            let categoryVC = CategoryViewController(viewModel: viewModel)
+            categoryVC.delegate = self
+            navigationController?.pushViewController(categoryVC, animated: true)
+        } else if indexPath.row == 1 {
             // Push Schedule Screen
             let scheduleVC = ScheduleViewController()
             scheduleVC.delegate = self
@@ -441,7 +443,7 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         
-        let title = indexPath.section == 0 ? "Emoji" : "Цвет"
+        let title = indexPath.section == 0 ? L10n.createTrackerEmoji : L10n.createTrackerColor
         header.configure(with: title)
         return header
     }
@@ -590,5 +592,14 @@ final class CreateTrackerHeaderView: UICollectionReusableView {
     
     func configure(with title: String) {
         titleLabel.text = title
+    }
+}
+
+// MARK: - CategoryViewControllerDelegate
+extension CreateTrackerViewController: CategoryViewControllerDelegate {
+    func didSelectCategory(_ categoryTitle: String) {
+        self.selectedCategory = categoryTitle
+        optionsTableView.reloadData()
+        validateInputs()
     }
 }
