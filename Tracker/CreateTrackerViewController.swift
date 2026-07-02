@@ -145,7 +145,8 @@ final class CreateTrackerViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(L10n.createTrackerCreate, for: .normal)
         button.backgroundColor = .ypGray
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitleColor(.ypWhite, for: .disabled)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true

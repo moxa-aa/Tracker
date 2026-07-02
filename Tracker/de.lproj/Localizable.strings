@@ -53,3 +53,22 @@
 "newCategory.ready" = "Fertig";
 
 "trackers.search" = "Suche";
+
+"context.pin" = "Anheften";
+"context.unpin" = "Lösen";
+"context.edit" = "Bearbeiten";
+"context.delete" = "Löschen";
+"category.pinned" = "Angeheftet";
+"trackers.filters" = "Filter";
+"filters.title" = "Filter";
+"filters.all" = "Alle Tracker";
+"filters.today" = "Tracker für heute";
+"filters.completed" = "Abgeschlossen";
+"filters.incomplete" = "Nicht abgeschlossen";
+"statistics.emptyText" = "Es gibt noch nichts zu analysieren";
+"statistics.completedTrackers" = "Tracker abgeschlossen";
+"deleteAlert.title" = "Möchten Sie diesen Tracker wirklich löschen?";
+"deleteAlert.delete" = "Löschen";
+"deleteAlert.cancel" = "Abbrechen";
+"editTracker.title" = "Gewohnheit bearbeiten";
+"editTracker.save" = "Speichern";
