@@ -10,6 +10,7 @@
         <attribute name="id" attributeType="UUID" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="schedule" attributeType="String" optional="YES" syncable="YES"/>
+        <attribute name="isPinned" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryCoreData" inverseName="trackers" inverseEntity="TrackerCategoryCoreData" syncable="YES"/>
         <relationship name="records" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrackerRecordCoreData" inverseName="tracker" inverseEntity="TrackerRecordCoreData" syncable="YES"/>
     </entity>

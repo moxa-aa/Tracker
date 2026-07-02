@@ -64,6 +64,16 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
+    private let pinImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "pin.fill")
+        imageView.tintColor = .white
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isHidden = true
+        return imageView
+    }()
+    
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -81,6 +91,7 @@ final class TrackerCell: UICollectionViewCell {
         cardView.addSubview(emojiContainerView)
         emojiContainerView.addSubview(emojiLabel)
         cardView.addSubview(titleLabel)
+        cardView.addSubview(pinImageView)
         
         contentView.addSubview(daysLabel)
         contentView.addSubview(doneButton)
@@ -105,6 +116,12 @@ final class TrackerCell: UICollectionViewCell {
             // Emoji label
             emojiLabel.centerXAnchor.constraint(equalTo: emojiContainerView.centerXAnchor),
             emojiLabel.centerYAnchor.constraint(equalTo: emojiContainerView.centerYAnchor),
+            
+            // Pin image view
+            pinImageView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 12),
+            pinImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
+            pinImageView.widthAnchor.constraint(equalToConstant: 24),
+            pinImageView.heightAnchor.constraint(equalToConstant: 24),
             
             // Title label
             titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
@@ -134,6 +151,7 @@ final class TrackerCell: UICollectionViewCell {
         cardView.backgroundColor = tracker.color
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
+        pinImageView.isHidden = !tracker.isPinned
         
         // Dynamic counter pluralization (Russian)
         daysLabel.text = formatDaysString(completedDays)

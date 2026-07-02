@@ -2,6 +2,7 @@ import UIKit
 
 protocol CreateTrackerDelegate: AnyObject {
     func didCreateTracker(_ tracker: Tracker, categoryTitle: String)
+    func didUpdateTracker(_ tracker: Tracker, categoryTitle: String)
 }
 
 final class CreateTrackerViewController: UIViewController {
@@ -14,6 +15,21 @@ final class CreateTrackerViewController: UIViewController {
     private var trackerName: String = ""
     private var selectedSchedule: Set<WeekDay> = []
     private var selectedCategory: String?
+    
+    // MARK: - Edit Mode State
+    private var isEditMode: Bool = false
+    private var editingTracker: Tracker?
+    private var completedDaysCount: Int = 0
+    
+    private let completedDaysLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .ypBlack
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
+        return label
+    }()
     
     // MARK: - Selected Style Properties
     private var selectedEmoji: String?
@@ -143,11 +159,24 @@ final class CreateTrackerViewController: UIViewController {
         self.isHabit = isHabit
     }
     
+    func configureForEditing(tracker: Tracker, categoryTitle: String, completedDays: Int) {
+        self.isEditMode = true
+        self.editingTracker = tracker
+        self.trackerName = tracker.name
+        self.selectedSchedule = tracker.schedule
+        self.selectedCategory = categoryTitle
+        self.selectedEmoji = tracker.emoji
+        self.selectedColor = tracker.color
+        self.completedDaysCount = completedDays
+        self.isHabit = !tracker.schedule.isEmpty
+    }
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        validateInputs()
     }
     
     // MARK: - Setup UI
@@ -159,6 +188,7 @@ final class CreateTrackerViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
+        contentView.addSubview(completedDaysLabel)
         contentView.addSubview(nameTextField)
         contentView.addSubview(optionsTableView)
         contentView.addSubview(collectionView)
@@ -185,6 +215,14 @@ final class CreateTrackerViewController: UIViewController {
         
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+        
+        if isEditMode {
+            navigationItem.title = L10n.editTrackerTitle
+            createButton.setTitle(L10n.editTrackerSave, for: .normal)
+            nameTextField.text = trackerName
+            completedDaysLabel.isHidden = false
+            completedDaysLabel.text = L10n.numberOfDays(completedDaysCount)
+        }
     }
     
     private func setupConstraints() {
@@ -204,7 +242,6 @@ final class CreateTrackerViewController: UIViewController {
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
             // Name text field
-            nameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             nameTextField.heightAnchor.constraint(equalToConstant: 75),
@@ -227,6 +264,19 @@ final class CreateTrackerViewController: UIViewController {
             buttonStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             buttonStackView.heightAnchor.constraint(equalToConstant: 60)
         ])
+        
+        if isEditMode {
+            NSLayoutConstraint.activate([
+                completedDaysLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+                completedDaysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                completedDaysLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+                nameTextField.topAnchor.constraint(equalTo: completedDaysLabel.bottomAnchor, constant: 40)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                nameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24)
+            ])
+        }
         
         collectionViewHeightConstraint = collectionView.heightAnchor.constraint(equalToConstant: 450)
         collectionViewHeightConstraint?.isActive = true
@@ -272,15 +322,29 @@ final class CreateTrackerViewController: UIViewController {
             trackerSchedule = Set(WeekDay.allCases)
         }
         
-        let tracker = Tracker(
-            id: UUID(),
-            name: trackerName,
-            color: selectedColor,
-            emoji: selectedEmoji,
-            schedule: trackerSchedule
-        )
+        if isEditMode {
+            guard let editingTracker = editingTracker else { return }
+            let updatedTracker = Tracker(
+                id: editingTracker.id,
+                name: trackerName,
+                color: selectedColor,
+                emoji: selectedEmoji,
+                schedule: trackerSchedule,
+                isPinned: editingTracker.isPinned
+            )
+            delegate?.didUpdateTracker(updatedTracker, categoryTitle: selectedCategory)
+        } else {
+            let tracker = Tracker(
+                id: UUID(),
+                name: trackerName,
+                color: selectedColor,
+                emoji: selectedEmoji,
+                schedule: trackerSchedule,
+                isPinned: false
+            )
+            delegate?.didCreateTracker(tracker, categoryTitle: selectedCategory)
+        }
         
-        delegate?.didCreateTracker(tracker, categoryTitle: selectedCategory)
         dismiss(animated: true)
     }
     
@@ -424,7 +488,7 @@ extension CreateTrackerViewController: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
             let color = colors[indexPath.item]
-            let isSelected = color == selectedColor
+            let isSelected = color.hexString == selectedColor?.hexString
             cell.configure(with: color, isSelected: isSelected)
             return cell
         }

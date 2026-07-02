@@ -53,3 +53,22 @@
 "newCategory.ready" = "Done";
 
 "trackers.search" = "Search";
+
+"context.pin" = "Pin";
+"context.unpin" = "Unpin";
+"context.edit" = "Edit";
+"context.delete" = "Delete";
+"category.pinned" = "Pinned";
+"trackers.filters" = "Filters";
+"filters.title" = "Filters";
+"filters.all" = "All trackers";
+"filters.today" = "Trackers for today";
+"filters.completed" = "Completed";
+"filters.incomplete" = "Incomplete";
+"statistics.emptyText" = "There is nothing to analyze";
+"statistics.completedTrackers" = "Trackers completed";
+"deleteAlert.title" = "Are you sure you want to delete this tracker?";
+"deleteAlert.delete" = "Delete";
+"deleteAlert.cancel" = "Cancel";
+"editTracker.title" = "Edit Habit";
+"editTracker.save" = "Save";

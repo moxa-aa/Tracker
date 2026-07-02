@@ -59,7 +59,8 @@ final class TrackerCategoryStore: NSObject {
                     name: name,
                     color: UIColor(hex: colorHex),
                     emoji: emoji,
-                    schedule: Set(days)
+                    schedule: Set(days),
+                    isPinned: trackerCoreData.isPinned
                 )
             }
             return TrackerCategory(title: title, trackers: trackers.sorted(by: { $0.name < $1.name }))

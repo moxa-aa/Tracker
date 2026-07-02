@@ -53,3 +53,22 @@
 "newCategory.ready" = "Готово";
 
 "trackers.search" = "Поиск";
+
+"context.pin" = "Закрепить";
+"context.unpin" = "Открепить";
+"context.edit" = "Редактировать";
+"context.delete" = "Удалить";
+"category.pinned" = "Закрепленные";
+"trackers.filters" = "Фильтры";
+"filters.title" = "Фильтры";
+"filters.all" = "Все трекеры";
+"filters.today" = "Трекеры на сегодня";
+"filters.completed" = "Завершенные";
+"filters.incomplete" = "Незавершенные";
+"statistics.emptyText" = "Анализировать пока нечего";
+"statistics.completedTrackers" = "Трекеров завершено";
+"deleteAlert.title" = "Уверены, что хотите удалить трекер?";
+"deleteAlert.delete" = "Удалить";
+"deleteAlert.cancel" = "Отменить";
+"editTracker.title" = "Редактирование привычки";
+"editTracker.save" = "Сохранить";

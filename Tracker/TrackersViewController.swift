@@ -352,6 +352,14 @@ extension TrackersViewController: CreateTrackerDelegate {
             print("Failed to add tracker: \(error)")
         }
     }
+    
+    func didUpdateTracker(_ tracker: Tracker, categoryTitle: String) {
+        do {
+            try trackerStore.updateTracker(tracker, toCategoryWithTitle: categoryTitle)
+        } catch {
+            print("Failed to update tracker: \(error)")
+        }
+    }
 }
 
 // MARK: - TrackerStoreDelegate

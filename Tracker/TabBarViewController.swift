@@ -40,7 +40,7 @@ final class TabBarViewController: UITabBarController {
             selectedImage: nil
         )
 
-        let statsVC = StatisticsViewController()
+        let statsVC = StatisticsViewController(trackerRecordStore: trackerRecordStore)
         let statsNav = UINavigationController(rootViewController: statsVC)
         statsNav.tabBarItem = UITabBarItem(
             title: L10n.tabStatistics,
