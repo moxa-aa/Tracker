@@ -71,6 +71,16 @@ final class TrackerTests: XCTestCase {
             trackerRecordStore: trackerRecordStore
         )
         
+        let calendar = Calendar(identifier: .gregorian)
+        var components = DateComponents()
+        components.year = 2026
+        components.month = 7
+        components.day = 1
+        if let fixedDate = calendar.date(from: components) {
+            vc.currentDate = fixedDate
+            vc.datePicker.date = fixedDate
+        }
+        
         vc.overrideUserInterfaceStyle = .light
         
         assertSnapshot(matching: vc, as: .image(on: .iPhoneX))
@@ -104,8 +114,25 @@ final class TrackerTests: XCTestCase {
             trackerRecordStore: trackerRecordStore
         )
         
+        let calendar = Calendar(identifier: .gregorian)
+        var components = DateComponents()
+        components.year = 2026
+        components.month = 7
+        components.day = 1
+        if let fixedDate = calendar.date(from: components) {
+            vc.currentDate = fixedDate
+            vc.datePicker.date = fixedDate
+        }
+        
         vc.overrideUserInterfaceStyle = .dark
         
         assertSnapshot(matching: vc, as: .image(on: .iPhoneX))
+    }
+    
+    func testNumberOfDaysLocalization() throws {
+        let resultEn = L10n.numberOfDays(5)
+        print("Localization result: \(resultEn)")
+        XCTAssertNotEqual(resultEn, "numberOfDays")
+        XCTAssertFalse(resultEn.contains("null"))
     }
 }

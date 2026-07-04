@@ -21,11 +21,12 @@ final class TrackersViewController: UIViewController {
         layout.minimumInteritemSpacing = 9
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 82, right: 0)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
     
-    private let datePicker: UIDatePicker = {
+    let datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.datePickerMode = .date
         picker.preferredDatePickerStyle = .compact
@@ -66,7 +67,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private var visibleCategories: [TrackerCategory] = []
-    private var currentDate: Date = Date() {
+    var currentDate: Date = Date() {
         didSet {
             updateCompletedTrackersIDs()
         }
