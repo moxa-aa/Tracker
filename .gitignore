@@ -19,3 +19,5 @@ build/
 # Generated Files
 Tracker/L10n.swift
 
+# CocoaPods
+Pods/

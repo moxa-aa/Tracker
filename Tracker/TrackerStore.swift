@@ -53,9 +53,46 @@ final class TrackerStore: NSObject {
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.color = tracker.color.hexString
         trackerCoreData.schedule = tracker.schedule.map { $0.rawValue }.joined(separator: ",")
+        trackerCoreData.isPinned = tracker.isPinned
         trackerCoreData.category = categoryCoreData
         
         try context.save()
+    }
+    
+    func togglePinTracker(_ tracker: Tracker) throws {
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        if let trackerCoreData = try context.fetch(request).first {
+            trackerCoreData.isPinned = !trackerCoreData.isPinned
+            try context.save()
+        }
+    }
+    
+    func deleteTracker(_ tracker: Tracker) throws {
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        if let trackerCoreData = try context.fetch(request).first {
+            context.delete(trackerCoreData)
+            try context.save()
+        }
+    }
+    
+    func updateTracker(_ tracker: Tracker, toCategoryWithTitle categoryTitle: String) throws {
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        if let trackerCoreData = try context.fetch(request).first {
+            trackerCoreData.name = tracker.name
+            trackerCoreData.emoji = tracker.emoji
+            trackerCoreData.color = tracker.color.hexString
+            trackerCoreData.schedule = tracker.schedule.map { $0.rawValue }.joined(separator: ",")
+            trackerCoreData.isPinned = tracker.isPinned
+            
+            let categoryStore = TrackerCategoryStore(context: context)
+            let categoryCoreData = try categoryStore.createCategory(with: categoryTitle)
+            trackerCoreData.category = categoryCoreData
+            
+            try context.save()
+        }
     }
 }
 
